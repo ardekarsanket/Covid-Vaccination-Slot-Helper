@@ -37,6 +37,9 @@ dependencies:
   flutter_svg: ^0.23.0+1
   http:
   intl: ^0.17.0
+  flutter_local_notifications: ^9.1.4
+  workmanager: ^0.4.1
+  shared_preferences: ^2.0.9
 
 
 dev_dependencies:

@@ -1,12 +1,19 @@
 import 'dart:convert';
+import 'package:vaccine_helper/services/user_simple_preferences.dart';
 import './slots.dart';
 import 'package:vaccine_helper/constant.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'services/check_slots.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() => runApp(MyApp());
+Future main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await UserSimplePreferences.init();
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -34,8 +41,9 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // ---------------------------------------------------------
 
-  TextEditingController pincodeController = TextEditingController();
-  TextEditingController dayController = TextEditingController();
+  String pinCodeText = "";
+  String formattedDate = "";
+  TextEditingController dateinput = TextEditingController();
   String currYear = DateFormat("yyyy").format(DateTime.now());
   String? dropDownValue = DateFormat("MM").format(DateTime.now());
   List slots = [];
@@ -46,9 +54,9 @@ class _HomeScreenState extends State<HomeScreen> {
     await http
         .get(Uri.parse(
             'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode=' +
-                pincodeController.text +
+                pinCodeText +
                 '&date=' +
-                dayController.text +
+                dateinput.text +
                 '%2F' +
                 dropDownValue! +
                 '%2F2021'))
@@ -63,6 +71,14 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  @override
+  void initState() {
+    super.initState();
+    pinCodeText = UserSimplePreferences.getPincode() ?? "";
+    dateinput.text = UserSimplePreferences.getDate() ?? "";
+  }
+
+  //---------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,8 +134,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Container(
               margin: EdgeInsets.symmetric(vertical: 20, horizontal: 40),
-              child: TextField(
-                controller: pincodeController,
+              child: TextFormField(
+                onChanged: (text) {
+                  pinCodeText = text;
+                },
+                initialValue: pinCodeText,
                 keyboardType: TextInputType.number,
                 maxLength: 6,
                 style: TextStyle(
@@ -132,62 +151,26 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Container(
               margin: EdgeInsets.fromLTRB(40, 0, 40, 20),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 60,
-                      child: TextField(
-                        keyboardType: TextInputType.number,
-                        controller: dayController,
-                        style: TextStyle(
-                          color: kBodyTextColor,
-                        ),
-                        decoration: InputDecoration(hintText: 'Enter Date'),
-                      ),
-                    ),
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                      child: Container(
-                    height: 52,
-                    child: DropdownButton<String>(
-                      isExpanded: true,
-                      value: dropDownValue,
-                      icon: const Icon(Icons.arrow_drop_down),
-                      iconSize: 24,
-                      elevation: 16,
-                      underline: Container(
-                        color: Colors.grey.shade400,
-                        height: 2,
-                      ),
-                      onChanged: (newValue) {
-                        setState(() {
-                          dropDownValue = newValue;
-                        });
-                      },
-                      items: <String>[
-                        '01',
-                        '02',
-                        '03',
-                        '04',
-                        '05',
-                        '06',
-                        '07',
-                        '08',
-                        '09',
-                        '10',
-                        '11',
-                        '12'
-                      ].map<DropdownMenuItem<String>>((String value) {
-                        return DropdownMenuItem<String>(
-                          value: value,
-                          child: Text(value),
-                        );
-                      }).toList(),
-                    ),
-                  ))
-                ],
+              child: TextField(
+                controller: dateinput,
+                decoration: InputDecoration(
+                    icon: Icon(Icons.calendar_today_rounded),
+                    hintText: 'Select Date'),
+                readOnly: true,
+                onTap: () async {
+                  showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime(2022),
+                  ).then((pickedDate) {
+                    if (pickedDate == null) return;
+                    formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+                    setState(() {
+                      dateinput.text = formattedDate;
+                    });
+                  });
+                },
               ),
             ),
             SizedBox(height: 20),
@@ -199,8 +182,10 @@ class _HomeScreenState extends State<HomeScreen> {
                   elevation: 6,
                   primary: Colors.blue[900],
                 ),
-                onPressed: () {
+                onPressed: () async {
                   fetchslots();
+                  await UserSimplePreferences.setPincode(pinCodeText);
+                  await UserSimplePreferences.setDate(dateinput.text);
                 },
                 child: Text('Find Slots'),
               ),
