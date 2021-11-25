@@ -43,7 +43,7 @@ class _SlotState extends State<Slot> {
                 ],
                 borderRadius: BorderRadius.circular(20),
               ),
-              height: 300,
+              height: 310,
               child: Expanded(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -72,6 +72,11 @@ class _SlotState extends State<Slot> {
                       Divider(),
                       Text(
                         'Slots - ' + widget.slots[index]['slots'].toString(),
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      Divider(),
+                      Text(
+                        'Fee - ' + widget.slots[index]['fee'].toString(),
                         style: TextStyle(fontSize: 16),
                       ),
                     ]),

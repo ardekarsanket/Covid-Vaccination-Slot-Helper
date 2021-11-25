@@ -7,7 +7,8 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'services/check_slots.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:workmanager/workmanager.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,6 @@ Future main() async {
 }
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,6 +31,9 @@ class MyApp extends StatelessWidget {
   }
 }
 
+String pinCodeText = "";
+TextEditingController dateinput = TextEditingController();
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -41,11 +44,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   // ---------------------------------------------------------
 
-  String pinCodeText = "";
-  String formattedDate = "";
-  TextEditingController dateinput = TextEditingController();
   String currYear = DateFormat("yyyy").format(DateTime.now());
-  String? dropDownValue = DateFormat("MM").format(DateTime.now());
   List slots = [];
 
   //-----------------------------------------------------------
@@ -56,9 +55,9 @@ class _HomeScreenState extends State<HomeScreen> {
             'https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByPin?pincode=' +
                 pinCodeText +
                 '&date=' +
-                dateinput.text +
+                dateinput.text.substring(0, 2) +
                 '%2F' +
-                dropDownValue! +
+                dateinput.text.substring(3, 5) +
                 '%2F2021'))
         .then((value) {
       Map result = jsonDecode(value.body);
@@ -165,7 +164,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     lastDate: DateTime(2022),
                   ).then((pickedDate) {
                     if (pickedDate == null) return;
-                    formattedDate = DateFormat('dd-MM-yyyy').format(pickedDate);
+                    String formattedDate =
+                        DateFormat('dd-MM-yyyy').format(pickedDate);
                     setState(() {
                       dateinput.text = formattedDate;
                     });
@@ -188,6 +188,56 @@ class _HomeScreenState extends State<HomeScreen> {
                   await UserSimplePreferences.setDate(dateinput.text);
                 },
                 child: Text('Find Slots'),
+              ),
+            ),
+            SizedBox(height: 20),
+            Container(
+              width: 250,
+              height: 45,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  elevation: 6,
+                  primary: Colors.blue[900],
+                ),
+                onPressed: () {
+                  if (pinCodeText.isNotEmpty && dateinput.text.isNotEmpty) {
+                    NotificationService.initState();
+                  } else if (pinCodeText.isEmpty) {
+                    setState(() {
+                      pinCodeText = "Please Enter Pincode";
+                    });
+                  } else if (dateinput.text.isEmpty) {
+                    setState(() {
+                      dateinput.text = "Please Select Date";
+                    });
+                  }
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text('Send Notifications'),
+                    Icon(Icons.notifications_active),
+                  ],
+                ),
+              ),
+            ),
+            SizedBox(height: 20),
+            Container(
+              width: 250,
+              height: 45,
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  elevation: 6,
+                  primary: Colors.blue[900],
+                ),
+                onPressed: () async {},
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Text('Stop Notifications'),
+                    Icon(Icons.notifications_off),
+                  ],
+                ),
               ),
             ),
           ],
