@@ -1,15 +1,15 @@
-# vaccine_helper
+# Vaccine Slot Helper
 
 
 <div align="center">
         <img width="45%" src="screenshots/homescreen.png" alt="About screen" title="Home Screen"</img>
-        <img height="0" width="8px">
+        <img height="0" width="30px">
         <img width="45%" src="screenshots/slots.png" alt="List screen" title="Slots screen"></img>
-        <img height="0" width="8px">
+        <img height="0" width="30px">
         <img width="45%" src="screenshots/notification_homescreen.png" alt="Notification Homescreen" title="Notifications Homescreen"></img>
-        <img height="0" width="8px">
+        <img height="0" width="30px">
         <img width="45%" src="screenshots/notification.png" alt="List screen" title="Slots screen"></img>
-        <img height="0" width="8px">
+        <img height="0" width="30px">
         <img width="45%" src="screenshots/notification_text.png" alt="List screen" title="Slots screen"></img>
 </div>
 
