@@ -43,41 +43,153 @@ class _SlotState extends State<Slot> {
                 ],
                 borderRadius: BorderRadius.circular(20),
               ),
-              height: 310,
+              height: 350,
               child: Expanded(
                 child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        'Centre ID - ' +
-                            widget.slots[index]['center_id'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Centre ID',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' - ${widget.slots[index]['center_id'].toString()}',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      Text(
-                        'Centre Name - ' +
-                            widget.slots[index]['name'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Centre Name',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' - ${widget.slots[index]['name'].toString()}',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      Text(
-                        'Centre Address - ' +
-                            widget.slots[index]['address'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Centre Address',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' - ${widget.slots[index]['address'].toString()}',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       Divider(),
-                      Text(
-                        'Vaccine Name - ' +
-                            widget.slots[index]['vaccine'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Vaccine Name',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' - ${widget.slots[index]['vaccine'].toString()}',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       Divider(),
-                      Text(
-                        'Slots - ' + widget.slots[index]['slots'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Slots',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' - ${widget.slots[index]['slots'].toString()}',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       Divider(),
-                      Text(
-                        'Fee - ' + widget.slots[index]['fee'].toString(),
-                        style: TextStyle(fontSize: 16),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Minimium Age Limit',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' - ${widget.slots[index]['min_age_limit'].toString()}',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: 'Fee',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            TextSpan(
+                              text:
+                                  ' - ${widget.slots[index]['fee'].toString()}',
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ]),
               ),

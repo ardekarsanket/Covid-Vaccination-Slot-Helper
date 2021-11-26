@@ -5,6 +5,7 @@ class UserSimplePreferences {
 
   static const _keyPincode = 'pincodeText';
   static const _keyDate = 'dateText';
+  static const _keyStatus = 'statusBool';
 
   static Future init() async =>
       _preferences = await SharedPreferences.getInstance();
@@ -18,4 +19,9 @@ class UserSimplePreferences {
       await _preferences!.setString(_keyDate, dateText);
 
   static String? getDate() => _preferences!.getString(_keyDate);
+
+  static Future setStatus(bool statusBool) async =>
+      await _preferences!.setBool(_keyStatus, statusBool);
+
+  static bool? getStatus() => _preferences!.getBool(_keyStatus);
 }

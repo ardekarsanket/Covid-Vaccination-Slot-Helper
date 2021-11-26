@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/cupertino.dart';
 import 'package:vaccine_helper/services/user_simple_preferences.dart';
 import './slots.dart';
 import 'package:vaccine_helper/constant.dart';
@@ -7,11 +8,12 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'services/check_slots.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:workmanager/workmanager.dart';
+import 'services/user_preferences.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   await UserSimplePreferences.init();
   runApp(MyApp());
 }
@@ -33,6 +35,7 @@ class MyApp extends StatelessWidget {
 
 String pinCodeText = "";
 TextEditingController dateinput = TextEditingController();
+bool status = false;
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -75,6 +78,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     pinCodeText = UserSimplePreferences.getPincode() ?? "";
     dateinput.text = UserSimplePreferences.getDate() ?? "";
+    status = UserSimplePreferences.getStatus() ?? false;
   }
 
   //---------------------------------------------------------------
@@ -184,61 +188,58 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 onPressed: () async {
                   fetchslots();
+                  await UserPref().updatePref(
+                    pinCodeText,
+                    dateinput.text.substring(0, 2),
+                    dateinput.text.substring(3, 5),
+                    dateinput.text.substring(6, 10),
+                    status,
+                  );
                   await UserSimplePreferences.setPincode(pinCodeText);
                   await UserSimplePreferences.setDate(dateinput.text);
                 },
-                child: Text('Find Slots'),
-              ),
-            ),
-            SizedBox(height: 20),
-            Container(
-              width: 250,
-              height: 45,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  elevation: 6,
-                  primary: Colors.blue[900],
-                ),
-                onPressed: () {
-                  if (pinCodeText.isNotEmpty && dateinput.text.isNotEmpty) {
-                    NotificationService.initState();
-                  } else if (pinCodeText.isEmpty) {
-                    setState(() {
-                      pinCodeText = "Please Enter Pincode";
-                    });
-                  } else if (dateinput.text.isEmpty) {
-                    setState(() {
-                      dateinput.text = "Please Select Date";
-                    });
-                  }
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text('Send Notifications'),
-                    Icon(Icons.notifications_active),
-                  ],
+                child: Text(
+                  'Find Slots',
+                  style: TextStyle(fontSize: 17),
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            Container(
-              width: 250,
-              height: 45,
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  elevation: 6,
-                  primary: Colors.blue[900],
+            SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Notifications: ',
+                  style: TextStyle(
+                    fontSize: 20,
+                  ),
                 ),
-                onPressed: () async {},
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Text('Stop Notifications'),
-                    Icon(Icons.notifications_off),
-                  ],
+                SizedBox(
+                  width: 20,
                 ),
-              ),
+                CupertinoSwitch(
+                  value: status,
+                  onChanged: (value) async {
+                    setState(() {
+                      status = value;
+                    });
+                    await UserSimplePreferences.setStatus(status);
+                    await UserPref().updateStatus(status);
+                    if (status == true) {
+                      NotificationService.initState();
+                      await UserPref().updatePref(
+                        pinCodeText,
+                        dateinput.text.substring(0, 2),
+                        dateinput.text.substring(3, 5),
+                        dateinput.text.substring(6, 10),
+                        status,
+                      );
+                    } else {
+                      NotificationService.cancelNotifications();
+                    }
+                  },
+                ),
+              ],
             ),
           ],
         ),
