@@ -226,7 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     await UserSimplePreferences.setStatus(status);
                     await UserPref().updateStatus(status);
                     if (status == true) {
-                      NotificationService.initState();
                       await UserPref().updatePref(
                         pinCodeText,
                         dateinput.text.substring(0, 2),
@@ -234,6 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         dateinput.text.substring(6, 10),
                         status,
                       );
+                      NotificationService.initState();
                     } else {
                       NotificationService.cancelNotifications();
                     }
