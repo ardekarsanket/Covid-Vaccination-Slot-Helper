@@ -134,7 +134,7 @@ class _SlotState extends State<Slot> {
                         TextSpan(
                           children: [
                             TextSpan(
-                              text: 'Slots',
+                              text: 'Slot',
                               style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
@@ -142,7 +142,7 @@ class _SlotState extends State<Slot> {
                             ),
                             TextSpan(
                               text:
-                                  ' - ${widget.slots[index]['slots'].toString()}',
+                                  ' - ${widget.slots[index]['slots'][0]['time'].toString()} \n',
                               style: TextStyle(
                                 fontSize: 16,
                               ),
